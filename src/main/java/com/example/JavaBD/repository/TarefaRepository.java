@@ -1,6 +1,6 @@
-package com.example.t4td0.repository;
+package com.example.JavaBD.repository;
 
-import com.example.t4td0.model.Tarefa;
+import com.example.JavaBD.model.Tarefa;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

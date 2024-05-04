@@ -1,4 +1,4 @@
-package com.example.t4td0.model;
+package com.example.t4td0.JavaBD;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

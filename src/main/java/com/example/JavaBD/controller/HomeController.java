@@ -1,7 +1,7 @@
-package com.example.t4td0.controller;
+package com.example.JavaBD.controller.controller;
 
-import com.example.t4td0.model.Tarefa;
-import com.example.t4td0.repository.TarefaRepository;
+import com.example.JavaBD.model.Tarefa;
+import com.example.JavaBD.repository.TarefaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
