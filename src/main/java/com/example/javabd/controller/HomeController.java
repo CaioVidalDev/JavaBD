@@ -33,7 +33,7 @@ public class HomeController {
 
         // Calcular a porcentagem de tarefas concluídas usando a Função Simples
         double porcentagemConcluidas = tarefaRepository.getPercentageDoneTasks();
-        model.addAttribute("porcentagemConcluidas", porcentagemConcluidas);
+        model.addAttribute("porcentagemConcluidas", porcentagemConcluidas > 0 ? porcentagemConcluidas : 0.0);
 
         return "home/projeto-tarefas/index";
     }
@@ -64,19 +64,17 @@ public class HomeController {
     }
 
     @PostMapping("/editar-tarefa")
-  public String editarTarefa(@ModelAttribute Tarefa tarefa) {
-    if (tarefa != null) {
-        
-        Tarefa tarefaAnterior = tarefaRepository.findById(tarefa.getId()).orElse(null);
-        if (tarefaAnterior != null && tarefaAnterior.getStatus() != null && tarefaAnterior.getStatus().equals("PENDENTE") && tarefa.getStatus() != null && tarefa.getStatus().equals("CONCLUÍDA")) {
-            tarefa.setDataConclusao(new Date());
+    public String editarTarefa(@ModelAttribute Tarefa tarefa) {
+        if (tarefa != null) {
+            Tarefa tarefaAnterior = tarefaRepository.findById(tarefa.getId()).orElse(null);
+            if (tarefaAnterior != null && tarefaAnterior.getStatus() != null && "PENDENTE".equals(tarefaAnterior.getStatus()) && tarefa.getStatus() != null && "CONCLUÍDA".equals(tarefa.getStatus())) {
+                tarefa.setDataConclusao(new Date());
+            }
+            tarefaRepository.updateTaskStatus(tarefa.getId(), tarefa.getStatus());
+            tarefaRepository.save(tarefa);
         }
-        tarefaRepository.updateTaskStatus(tarefa.getId(), tarefa.getStatus());
-        tarefaRepository.save(tarefa);
+        return "redirect:/";
     }
-    return "redirect:/";
-}
-
 
     @GetMapping("/excluir-tarefa/{id}")
     public String preencherFormularioExclusao(@PathVariable("id") Long id, Model model) {

@@ -26,7 +26,7 @@ public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
             "FROM Tarefa t")
     List<TarefaView> getTarefasComStatus();
 
-    @Query("SELECT ROUND(100.0 * (SELECT COUNT(*) FROM Tarefa WHERE status = 'CONCLUÍDA') / (SELECT COUNT(*) FROM Tarefa), 2) AS percentageDone")
+    @Query("SELECT ROUND(100.0 * (SELECT COUNT(*) FROM Tarefa WHERE status = 'CONCLUÍDA') / (SELECT CASE WHEN (SELECT COUNT(*) FROM Tarefa) = 0 THEN 1 ELSE (SELECT COUNT(*) FROM Tarefa) END), 2) AS percentageDone")
     double getPercentageDoneTasks();
 
     @Modifying
