@@ -2,12 +2,15 @@ package com.example.javabd.controller;
 
 import com.example.javabd.model.Tarefa;
 import com.example.javabd.repository.TarefaRepository;
+import com.example.javabd.view.TarefaView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class HomeController {
@@ -19,6 +22,19 @@ public class HomeController {
     public String index(Model model) {
         List<Tarefa> tarefas = tarefaRepository.findAll();
         model.addAttribute("tarefas", tarefas);
+
+        // Consulta Aninhada para obter a quantidade de tarefas concluídas e pendentes
+        Map<String, Long> tarefasStatus = tarefaRepository.getTaskStatusCount();
+        model.addAttribute("tarefasStatus", tarefasStatus);
+
+        // Utilizar a View para obter a lista de tarefas com status
+        List<TarefaView> tarefasView = tarefaRepository.getTarefasComStatus();
+        model.addAttribute("tarefasView", tarefasView);
+
+        // Calcular a porcentagem de tarefas concluídas usando a Função Simples
+        double porcentagemConcluidas = tarefaRepository.getPercentageDoneTasks();
+        model.addAttribute("porcentagemConcluidas", porcentagemConcluidas);
+
         return "home/projeto-tarefas/index";
     }
 
@@ -48,12 +64,19 @@ public class HomeController {
     }
 
     @PostMapping("/editar-tarefa")
-    public String editarTarefa(@ModelAttribute Tarefa tarefa) {
-        if (tarefa != null) {
-            tarefaRepository.save(tarefa);
+  public String editarTarefa(@ModelAttribute Tarefa tarefa) {
+    if (tarefa != null) {
+        
+        Tarefa tarefaAnterior = tarefaRepository.findById(tarefa.getId()).orElse(null);
+        if (tarefaAnterior != null && tarefaAnterior.getStatus() != null && tarefaAnterior.getStatus().equals("PENDENTE") && tarefa.getStatus() != null && tarefa.getStatus().equals("CONCLUÍDA")) {
+            tarefa.setDataConclusao(new Date());
         }
-        return "redirect:/";
+        tarefaRepository.updateTaskStatus(tarefa.getId(), tarefa.getStatus());
+        tarefaRepository.save(tarefa);
     }
+    return "redirect:/";
+}
+
 
     @GetMapping("/excluir-tarefa/{id}")
     public String preencherFormularioExclusao(@PathVariable("id") Long id, Model model) {
@@ -83,5 +106,3 @@ public class HomeController {
         }
     }
 }
-
-
